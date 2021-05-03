@@ -3,9 +3,9 @@ from hashlib import sha256
 from base64 import b64decode
 import pysodium
 
-from ..acceptedsubmissions import AcceptedSubmissions
-from ..challenge import Challenge
-from ..settings import Settings
+from .acceptedsubmissions import AcceptedSubmissions
+from .challenge import Challenge
+from .settings import Settings
 
 # last milliseconds to remove from data, to cope with eventual consistency
 TOLERANCE = 30*1000
@@ -54,4 +54,4 @@ def audit():
 
     assert score.equivalent_to(plat_score), 'Wrong scoreboard!'
 
-    print('OK')
+    return teams, log, score

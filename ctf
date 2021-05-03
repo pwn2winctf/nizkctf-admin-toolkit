@@ -8,7 +8,7 @@ import traceback
 from pathlib import Path
 
 from nizkctf.cli import news
-from nizkctf.cli.audit import audit
+from nizkctf.audit import audit
 from nizkctf.repo import contents, trail
 from nizkctf.challenge import Challenge, ChallengeIndex, \
         chall_dir, derive_keypair, random_salt
@@ -38,6 +38,7 @@ def cmd_init(args):
 
 def cmd_audit(args):
     audit()
+    print('OK')
 
 
 def cmd_add_challenge(args):
