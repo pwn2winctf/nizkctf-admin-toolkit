@@ -4,10 +4,12 @@ from .challenge import Challenge
 
 
 class AcceptedSubmissions(dict):
-    def __init__(self):
+    def __init__(self, other=None):
         super(AcceptedSubmissions, self).__init__()
         self.setdefault('tasks', [])
         self.setdefault('standings', [])
+        if other:
+            self.update(other)
 
     def get_team_standing(self, team_name):
         for team_standing in self['standings']:
@@ -50,7 +52,7 @@ class AcceptedSubmissions(dict):
         for i, standing in enumerate(standings):
             standing['pos'] = i + 1
 
-    def add(self, chall, team_name, refresh=False):
+    def add(self, accepted_time, chall, team_name, refresh=False):
         chall_id = chall.id
 
         if chall_id not in self['tasks']:
@@ -62,7 +64,6 @@ class AcceptedSubmissions(dict):
             # Challenge already submitted by team
             return
 
-        accepted_time = int(time.time())
         team_standing['taskStats'][chall_id] = {'points': 0,
                                                 'time': accepted_time}
         team_standing['lastAccept'] = accepted_time
@@ -76,6 +77,21 @@ class AcceptedSubmissions(dict):
             self.recompute_score(Challenge(chall_id))
         self.rank()
 
+    def remove_recent_solves(self, ms_ago):
+        cut_at = 1000*time.time() - ms_ago
+        standings = []
+        for standing in self['standings']:
+            if standing['lastAccept'] > cut_at:
+                standing['taskStats'] = {chall_id: task_info
+                                         for chall_id, task_info in standing['taskStats'].items()
+                                         if task_info['time'] <= cut_at}
+                if not standing['taskStats']:
+                    continue
+                standing['lastAccept'] = max(task_info['time']
+                                             for task_info in standing['taskStats'].values())
+            standings.append(standing)
+        self['standings'] = standings
+
     def equivalent_to(self, other):
         return self['standings'] == other['standings'] and \
-                set(self['tasks']).issubset(set(other['tasks']))
+            set(self['tasks']).issubset(set(other['tasks']))
