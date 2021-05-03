@@ -25,3 +25,4 @@ class News(SerializableList):
 
         self.append(message)
         self.save()
+        contents.add([NEWS_FILE])

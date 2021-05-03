@@ -40,8 +40,13 @@ class Repo(object):
         self.checkout(MAIN_BRANCH)
         self.git(['pull', '--rebase', 'upstream', MAIN_BRANCH])
 
+    def add(self, files=None):
+        if files is None:
+            self.git(['add', '-A'])
+        else:
+            self.git(['add'] + files)
+
     def push(self, commit_message='commit'):
-        self.git(['add', '-A'])
         self.git(['commit', '--no-gpg-sign', '-m', commit_message],
                 returncodes={0, 1})  # do not fail on 'nothing to commit'
         self.git(['push', '-u', 'origin', MAIN_BRANCH])

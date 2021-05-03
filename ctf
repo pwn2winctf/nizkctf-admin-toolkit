@@ -1,13 +1,19 @@
 #! /usr/bin/env python3
 # -*- encoding: utf-8 -*-
+import os
 import sys
+import glob
 import argparse
 import pysodium
 import traceback
+from pathlib import Path
 
 from nizkctf.cli import news
 from nizkctf.repo import contents, trail
-from nizkctf.challenge import Challenge, derive_keypair, random_salt
+from nizkctf.challenge import Challenge, chall_dir, derive_keypair, random_salt
+
+
+LANGS = ['en', 'pt']
 
 
 def ensure_unicode_locale():
@@ -20,6 +26,7 @@ def ensure_unicode_locale():
               'changing to a Unicode locale, e.g.\n\n'
               '  export LC_ALL=en_US.UTF-8\n\n\n',
               file=sys.stderr)
+
 
 def cmd_init(args):
     print('Cloning Git repositories', file=sys.stderr)
@@ -34,14 +41,21 @@ def cmd_add_challenge(args):
     tags = input('Tags (separate tags with space): ').strip().split()
     salt = random_salt()
     while True:
+        flag = input('Flag: ').strip()
+        if flag.startswith('CTF-BR{') and flag.endswith('}'):
+            break
+        print('Please respect flag format: CTF-BR{...}')
+    while True:
         level = input('Pwhash level (interactive, moderate, sensitive): ').strip().upper()
+        if level == 'INTERACTIVE' and len(flag) < 24:
+            print('Please use moderate or sensitive level for short flags')
+            continue
         try:
             opslimit = getattr(pysodium, 'crypto_pwhash_argon2id_OPSLIMIT_'+level)
             memlimit = getattr(pysodium, 'crypto_pwhash_argon2id_MEMLIMIT_'+level)
             break
         except:
             traceback.print_exc()
-    flag = input('Flag: ').strip()
 
     pk, _ = derive_keypair(salt, opslimit, memlimit, flag)
     chall = Challenge(id=id)
@@ -54,6 +68,36 @@ def cmd_add_challenge(args):
     chall['pk'] = pk
     chall.save()
 
+    print('\nPlease add challenge description to:')
+    for lang in LANGS:
+        filename = os.path.join(chall_dir, '{}.{}.md'.format(id, lang))
+        Path(filename).touch()
+        print(' - {}'.format(filename))
+    print('\nthen call:')
+    print('./ctf publish_chall {}'.format(id))
+
+
+def cmd_publish_chall(args):
+    if args.chall == []:
+        for filename in glob.glob(os.path.join(chall_dir, '*.json')):
+            chall_id, _ = os.path.splitext(os.path.basename(filename))
+            if chall_id == 'index':
+                continue
+            print(' - {}'.format(chall_id))
+            args.chall.append(chall_id)
+        ans = input('Going to publish all challenges, are you sure? (y/n) ')
+        if ans != 'y':
+            print('Aborted')
+            return
+
+    for chall_id in args.chall:
+        files = ['{}.json'.format(chall_id)]
+        files += ['{}.{}.md'.format(chall_id, lang) for lang in LANGS]
+        files = [os.path.join(chall_dir, filename) for filename in files]
+        contents.add(files)
+
+    contents.push(commit_message='Publish challenges')
+
 
 def cmd_add_news(args):
     news.submit(args.msg)
@@ -65,12 +109,14 @@ def main():
     commands = {
         'init': cmd_init,
         'add_chall': cmd_add_challenge,
+        'publish_chall': cmd_publish_chall,
         'add_news': cmd_add_news,
     }
 
     parser = argparse.ArgumentParser(description='NIZKCTF admin toolkit')
     subparsers = parser.add_subparsers(help='command help',
-                                       metavar='{init,add_chall,add_news}')
+                                       metavar='{init,add_chall,'
+                                       'publish_chall,add_news}')
 
     parser_init = subparsers.add_parser('init', help='init ctf environment')
     parser_init.set_defaults(command='init')
@@ -78,10 +124,13 @@ def main():
     parser_add_challenge = subparsers.add_parser('add_chall', help='add challenge')
     parser_add_challenge.set_defaults(command='add_chall')
 
+    parser_publish_challenge = subparsers.add_parser('publish_chall', help='publish challenge')
+    parser_publish_challenge.set_defaults(command='publish_chall')
+    parser_publish_challenge.add_argument('chall', nargs='*', help='id of challenges (empty for all)')
+
     parser_add_news = subparsers.add_parser('add_news', help='add news')
     parser_add_news.set_defaults(command='add_news')
-    parser_add_news.add_argument('--msg', required=True,
-                                 help='msg to be added')
+    parser_add_news.add_argument('msg', help='msg to be added')
 
     if len(sys.argv) == 1:
         parser.print_help()
