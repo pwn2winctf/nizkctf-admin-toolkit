@@ -8,13 +8,13 @@ import codecs
 import pysodium
 from .serializable import SerializableDict, SerializableList
 from .settings import Settings
+from .repo import contents
 
 
 CHALLENGES_DIR = 'challenges'
 INDEX_FILE = 'index.json'
 
-thisdir = os.path.dirname(os.path.realpath(__file__))
-chall_dir = os.path.realpath(os.path.join(thisdir, os.pardir, CHALLENGES_DIR))
+chall_dir = contents.get_path(CHALLENGES_DIR)
 
 
 class Challenge(SerializableDict):
