@@ -46,7 +46,7 @@ class Repo(object):
             self.git(['add'] + files)
 
     def push(self, commit_message='commit'):
-        self.git(['commit', '--no-gpg-sign', '-m', commit_message],
+        self.git(['commit', '-m', commit_message],
                 returncodes={0, 1})  # do not fail on 'nothing to commit'
         self.git(['push', '-u', 'origin', MAIN_BRANCH])
 
