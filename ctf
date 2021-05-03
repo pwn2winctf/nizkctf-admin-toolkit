@@ -74,7 +74,7 @@ def cmd_add_challenge(args):
         filename = os.path.join(chall_dir, '{}.{}.md'.format(id, lang))
         Path(filename).touch()
         print(' - {}'.format(filename))
-    print('\nthen call:')
+    print('\nto make it public, call:')
     print('./ctf publish_chall {}'.format(id))
 
 
