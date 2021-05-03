@@ -32,9 +32,7 @@ def cmd_add_challenge(args):
     id = input('Challenge id (digits, letters, underscore): ').strip()
     title = input('Title: ').strip()
     tags = input('Tags (separate tags with space): ').strip().split()
-    salt = input('Salt (empty string for random salt): ').strip()
-    if salt == '':
-        salt = random_salt()
+    salt = random_salt()
     while True:
         level = input('Pwhash level (interactive, moderate, sensitive): ').strip().upper()
         try:
