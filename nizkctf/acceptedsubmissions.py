@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import time
 from .scoring import compute_points
 from .challenge import Challenge

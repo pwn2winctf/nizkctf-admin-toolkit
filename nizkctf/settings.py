@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 class Settings:
     contents_repo = "git@github.com:pwn2winctf/nizkctf-content.git"
     trail_repo = "git@github.com:pwn2winctf/nizkctf-audit-trail.git"

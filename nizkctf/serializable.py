@@ -1,7 +1,3 @@
-# -*- encoding: utf-8 -*-
-
-from __future__ import unicode_literals, division, print_function,\
-                       absolute_import
 import os
 import json
 from base64 import b64encode, b64decode

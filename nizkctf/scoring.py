@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 
 from .settings import Settings
 from math import floor, log
