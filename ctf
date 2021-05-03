@@ -10,7 +10,8 @@ from pathlib import Path
 
 from nizkctf.cli import news
 from nizkctf.repo import contents, trail
-from nizkctf.challenge import Challenge, chall_dir, derive_keypair, random_salt
+from nizkctf.challenge import Challenge, ChallengeIndex, \
+        chall_dir, derive_keypair, random_salt
 
 
 LANGS = ['en', 'pt']
@@ -90,11 +91,16 @@ def cmd_publish_chall(args):
             print('Aborted')
             return
 
+    index = ChallengeIndex()
     for chall_id in args.chall:
         files = ['{}.json'.format(chall_id)]
         files += ['{}.{}.md'.format(chall_id, lang) for lang in LANGS]
         files = [os.path.join(chall_dir, filename) for filename in files]
         contents.add(files)
+        if chall_id not in index:
+            index.append(chall_id)
+    index.save()
+    contents.add([index.path()])
 
     contents.push(commit_message='Publish challenges')
 
