@@ -36,7 +36,7 @@ If everything is fine, it will print `OK`.
 
 We record a signed and timestamped version of the audit trail at the [nizkctf-audit-trail](https://github.com/pwn2winctf/nizkctf-audit-trail) repository.
 
-## Optional: support for timestamps
+### Optional: support for timestamps
 
 Timestamps are recorded to the Bitcoin blockchain using [OpenTimestamps](https://github.com/opentimestamps). If you want to check them, install it as follows:
 
@@ -48,7 +48,7 @@ git config commit.gpgsign true
 git config gpg.program ots-git-gpg-wrapper.sh
 ```
 
-## Verifying commits
+### Verifying commits
 
 ```bash
 cd trail
