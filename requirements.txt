@@ -1,0 +1,2 @@
+requests[security]==2.25.1
+pysodium==0.7.9
