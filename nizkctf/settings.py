@@ -1,4 +1,4 @@
-API_URL = 'http://localhost:8080'
+API_URL = 'https://api.pwn2.win'
 
 class Settings:
     contents_repo = "git@github.com:pwn2winctf/nizkctf-content.git"

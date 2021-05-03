@@ -7,13 +7,6 @@ import pysodium
 import traceback
 from pathlib import Path
 
-from nizkctf.cli import news
-from nizkctf.audit import audit
-from nizkctf.cli.audit import audit_record
-from nizkctf.repo import contents, trail
-from nizkctf.challenge import Challenge, ChallengeIndex, \
-        chall_dir, derive_keypair, random_salt
-
 
 LANGS = ['en', 'pt']
 
@@ -31,6 +24,8 @@ def ensure_unicode_locale():
 
 
 def cmd_init(args):
+    from nizkctf.repo import contents, trail
+
     print('Cloning Git repositories', file=sys.stderr)
     contents.clone()
     trail.clone()
@@ -38,6 +33,9 @@ def cmd_init(args):
 
 
 def cmd_audit(args):
+    from nizkctf.audit import audit
+    from nizkctf.cli.audit import audit_record
+
     if args.record:
         audit_record()
     else:
@@ -46,6 +44,9 @@ def cmd_audit(args):
 
 
 def cmd_add_challenge(args):
+    from nizkctf.challenge import Challenge, \
+        chall_dir, derive_keypair, random_salt
+
     id = input('Challenge id (digits, letters, underscore): ').strip()
     title = input('Title: ').strip()
     tags = input('Tags (separate tags with space): ').strip().split()
@@ -56,13 +57,16 @@ def cmd_add_challenge(args):
             break
         print('Please respect flag format: CTF-BR{...}')
     while True:
-        level = input('Pwhash level (interactive, moderate, sensitive): ').strip().upper()
+        level = input(
+            'Pwhash level (interactive, moderate, sensitive): ').strip().upper()
         if level == 'INTERACTIVE' and len(flag) < 24:
             print('Please use moderate or sensitive level for short flags')
             continue
         try:
-            opslimit = getattr(pysodium, 'crypto_pwhash_argon2id_OPSLIMIT_'+level)
-            memlimit = getattr(pysodium, 'crypto_pwhash_argon2id_MEMLIMIT_'+level)
+            opslimit = getattr(
+                pysodium, 'crypto_pwhash_argon2id_OPSLIMIT_'+level)
+            memlimit = getattr(
+                pysodium, 'crypto_pwhash_argon2id_MEMLIMIT_'+level)
             break
         except:
             traceback.print_exc()
@@ -88,6 +92,9 @@ def cmd_add_challenge(args):
 
 
 def cmd_publish_chall(args):
+    from nizkctf.repo import contents
+    from nizkctf.challenge import ChallengeIndex, chall_dir
+
     if args.chall == []:
         for filename in glob.glob(os.path.join(chall_dir, '*.json')):
             chall_id, _ = os.path.splitext(os.path.basename(filename))
@@ -115,6 +122,8 @@ def cmd_publish_chall(args):
 
 
 def cmd_add_news(args):
+    from nizkctf.cli import news
+
     news.submit(args.msg)
 
 
@@ -139,14 +148,18 @@ def main():
 
     parser_audit = subparsers.add_parser('audit', help='audit ctf scoreboard')
     parser_audit.set_defaults(command='audit', record=False)
-    parser_audit.add_argument('--record', action='store_true', help='record audit trail to git')
+    parser_audit.add_argument(
+        '--record', action='store_true', help='record audit trail to git')
 
-    parser_add_challenge = subparsers.add_parser('add_chall', help='add challenge')
+    parser_add_challenge = subparsers.add_parser(
+        'add_chall', help='add challenge')
     parser_add_challenge.set_defaults(command='add_chall')
 
-    parser_publish_challenge = subparsers.add_parser('publish_chall', help='publish challenge(s)')
+    parser_publish_challenge = subparsers.add_parser(
+        'publish_chall', help='publish challenge(s)')
     parser_publish_challenge.set_defaults(command='publish_chall')
-    parser_publish_challenge.add_argument('chall', nargs='*', help='id of challenges (empty for all)')
+    parser_publish_challenge.add_argument(
+        'chall', nargs='*', help='id of challenges (empty for all)')
 
     parser_add_news = subparsers.add_parser('add_news', help='add news')
     parser_add_news.set_defaults(command='add_news')
