@@ -33,11 +33,10 @@ class Repo(object):
 
     def clone(self):
         self.git(['clone', self.url, self.path], cwd=self.clone_into)
-        self.git(['remote', 'add', 'upstream', self.url])
 
     def pull(self):
         self.checkout(MAIN_BRANCH)
-        self.git(['pull', '--rebase', 'upstream', MAIN_BRANCH])
+        self.git(['pull', '--rebase', 'origin', MAIN_BRANCH])
 
     def add(self, files=None):
         if files is None:
@@ -54,8 +53,8 @@ class Repo(object):
         for retry in range(1, retries + 1):
             try:
                 self.checkout(MAIN_BRANCH)
-                self.git(['fetch', 'upstream'])
-                self.git(['reset', '--hard', 'upstream/' + MAIN_BRANCH])
+                self.git(['fetch', 'origin'])
+                self.git(['reset', '--hard', 'origin/{}'.format(MAIN_BRANCH)])
                 self.pull()
                 yield retry  # do local modifications
                 self.push(commit_message)
