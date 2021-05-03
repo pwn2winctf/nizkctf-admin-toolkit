@@ -130,7 +130,7 @@ def main():
     parser_add_challenge = subparsers.add_parser('add_chall', help='add challenge')
     parser_add_challenge.set_defaults(command='add_chall')
 
-    parser_publish_challenge = subparsers.add_parser('publish_chall', help='publish challenge')
+    parser_publish_challenge = subparsers.add_parser('publish_chall', help='publish challenge(s)')
     parser_publish_challenge.set_defaults(command='publish_chall')
     parser_publish_challenge.add_argument('chall', nargs='*', help='id of challenges (empty for all)')
 
