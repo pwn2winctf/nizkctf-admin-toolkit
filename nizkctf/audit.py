@@ -1,3 +1,4 @@
+import copy
 import requests
 from hashlib import sha256
 from base64 import b64decode
@@ -47,12 +48,17 @@ def audit():
 
         score.add(accepted_time, chall, team_name)
 
+    plat_score_recomputed = copy.deepcopy(plat_score)
+    plat_score_recomputed.refresh()
+
+    assert plat_score_recomputed['standings'] == plat_score['standings'], "Platform scoreboard's scores or rank are incorrect!"
+
     score.remove_recent_solves(TOLERANCE)
     plat_score.remove_recent_solves(TOLERANCE)
 
     score.refresh()
     plat_score.refresh()
 
-    assert score == plat_score, 'Wrong scoreboard!'
+    assert score == plat_score, "Platform scoreboard does not match with audit log!"
 
     return teams, log, score
