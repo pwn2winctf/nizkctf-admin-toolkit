@@ -6,13 +6,14 @@ import pysodium
 from .acceptedsubmissions import AcceptedSubmissions
 from .challenge import Challenge
 from .settings import Settings
+from .repo import contents
 
 # last milliseconds to remove from data, to cope with eventual consistency
 TOLERANCE = 30*1000
 
 
 def audit():
-    # contents.pull()
+    contents.pull()
 
     r = requests.get(Settings.teams_url)
     r.raise_for_status()
