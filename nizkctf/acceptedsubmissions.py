@@ -1,4 +1,3 @@
-import time
 from .scoring import compute_points
 from .challenge import Challenge
 
@@ -84,8 +83,7 @@ class AcceptedSubmissions(dict):
             self.recompute_score(Challenge(chall_id))
         self.rank()
 
-    def remove_recent_solves(self, ms_ago):
-        cut_at = 1000*time.time() - ms_ago
+    def remove_since(self, cut_at):
         standings = []
         for standing in self['standings']:
             if standing['lastAccept'] > cut_at:

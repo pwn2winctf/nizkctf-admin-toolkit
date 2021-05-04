@@ -1,3 +1,4 @@
+import time
 import copy
 import requests
 from hashlib import sha256
@@ -53,8 +54,9 @@ def audit():
 
     assert plat_score_recomputed['standings'] == plat_score['standings'], "Platform scoreboard's scores or rank are incorrect!"
 
-    score.remove_recent_solves(TOLERANCE)
-    plat_score.remove_recent_solves(TOLERANCE)
+    cut_at = 1000*time.time() - TOLERANCE
+    score.remove_since(cut_at)
+    plat_score.remove_since(cut_at)
 
     score.refresh()
     plat_score.refresh()
