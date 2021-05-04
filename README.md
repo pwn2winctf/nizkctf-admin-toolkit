@@ -43,6 +43,7 @@ Timestamps are recorded to the Bitcoin blockchain using [OpenTimestamps](https:/
 ```bash
 pip install opentimestamps-client
 curl -o .venv/bin/ots-git-gpg-wrapper.sh https://raw.githubusercontent.com/opentimestamps/opentimestamps-client/master/ots-git-gpg-wrapper.sh
+chmod +x .venv/bin/ots-git-gpg-wrapper.sh
 cd trail
 git config commit.gpgsign true
 git config gpg.program ots-git-gpg-wrapper.sh
