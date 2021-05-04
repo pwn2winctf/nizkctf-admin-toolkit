@@ -52,6 +52,12 @@ class AcceptedSubmissions(dict):
         for i, standing in enumerate(standings):
             standing['pos'] = i + 1
 
+    def update_tasks(self):
+        tasks = set()
+        for standing in self['standings']:
+            tasks.update(standing['taskStats'].keys())
+        self['tasks'] = list(tasks)
+
     def add(self, accepted_time, chall, team_name, refresh=False):
         chall_id = chall.id
 
@@ -73,6 +79,7 @@ class AcceptedSubmissions(dict):
             self.rank()
 
     def refresh(self):
+        self.update_tasks()
         for chall_id in self['tasks']:
             self.recompute_score(Challenge(chall_id))
         self.rank()
@@ -91,7 +98,3 @@ class AcceptedSubmissions(dict):
                                              for task_info in standing['taskStats'].values())
             standings.append(standing)
         self['standings'] = standings
-
-    def equivalent_to(self, other):
-        return self['standings'] == other['standings'] and \
-            set(self['tasks']).issubset(set(other['tasks']))

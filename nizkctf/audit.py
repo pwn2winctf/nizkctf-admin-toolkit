@@ -52,6 +52,6 @@ def audit():
     score.refresh()
     plat_score.refresh()
 
-    assert score.equivalent_to(plat_score), 'Wrong scoreboard!'
+    assert score == plat_score, 'Wrong scoreboard!'
 
     return teams, log, score
