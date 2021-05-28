@@ -45,6 +45,9 @@ class AcceptedSubmissions(dict):
 
     def rank(self):
         standings = self['standings']
+        for standing in standings:
+            standing['lastAccept'] = max(task['time']
+                                         for task in standing['taskStats'].values())
         standings.sort(key=lambda standing: (standing['score'],
                                              -standing['lastAccept']),
                        reverse=True)
