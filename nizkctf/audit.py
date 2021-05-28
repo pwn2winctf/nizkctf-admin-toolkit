@@ -11,7 +11,7 @@ from .settings import Settings
 from .repo import contents
 
 # last milliseconds to remove from data, to cope with eventual consistency
-TOLERANCE = 120*1000
+TOLERANCE = 60*1000
 
 
 def audit():

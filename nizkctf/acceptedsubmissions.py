@@ -58,7 +58,7 @@ class AcceptedSubmissions(dict):
         tasks = set()
         for standing in self['standings']:
             tasks.update(standing['taskStats'].keys())
-        self['tasks'] = list(tasks)
+        self['tasks'] = sorted(tasks)
 
     def add(self, accepted_time, chall, team_name, refresh=False):
         chall_id = chall.id
@@ -89,13 +89,12 @@ class AcceptedSubmissions(dict):
     def remove_since(self, cut_at):
         standings = []
         for standing in self['standings']:
-            if standing['lastAccept'] > cut_at:
-                standing['taskStats'] = {chall_id: task_info
-                                         for chall_id, task_info in standing['taskStats'].items()
-                                         if task_info['time'] <= cut_at}
-                if not standing['taskStats']:
-                    continue
-                standing['lastAccept'] = max(task_info['time']
-                                             for task_info in standing['taskStats'].values())
+            standing['taskStats'] = {chall_id: task_info
+                                     for chall_id, task_info in standing['taskStats'].items()
+                                     if task_info['time'] <= cut_at}
+            if not standing['taskStats']:
+                continue
+            standing['lastAccept'] = max(task_info['time']
+                                         for task_info in standing['taskStats'].values())
             standings.append(standing)
         self['standings'] = standings
